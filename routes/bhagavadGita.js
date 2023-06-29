@@ -35,7 +35,7 @@ router.get('/shloka', (req, res) => {
     return res.status(500).send({
       success: false,
       message: "Internal Server Error"
-    })
+    });
   }
 });
 
@@ -54,9 +54,9 @@ router.get('/all', (req, res) => {
     const chapterNo = {
       "chapter": chapter
     }
-    const starIndex = (page - 1) * limit + 1;
-    const endIndex = page * limit;
-    const logicalPage = temp.length / 10;
+    const starIndex = parseInt((page - 1) * limit + 1);
+    const endIndex = parseInt(page * limit);
+    const logicalPage = parseInt(temp.length / 10);
     const logicalLimit = 10;
     const data = temp.slice(starIndex - 1, endIndex)
     if (data.length == 0) {

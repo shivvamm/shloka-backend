@@ -5,3 +5,16 @@ all?chapter=5
 random
 
 random/by?chapter
+
+
+chanakya 
+
+/shloka/random
+
+/shloka/all?page=1&limit=5
+
+
+slogan 
+/random
+
+/all?limit 

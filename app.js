@@ -23,24 +23,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/bahgavad_gita', gitaRouter);
 app.use('/api/chanakya', chanakyaRouter);
-app.use('/api/slogan', sloganRouter);
+app.use('/api/sanskrit', sloganRouter);
 app.use('/api/vidur_niti', vidurRouter);
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function (err, req, res, next) {
+  res.status(404).json({
+    error: {
+      code: 'NOT_FOUND',
+      message: 'The requested resource could not be found',
+      documentationUrl: 'https://yourapi.com/docs', // Link to API documentation
+    },
+  });
+  // // set locals, only providing error in development
+  // res.locals.message = err.message;
+  // res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  // // render the error page
+  // res.status(err.status || 500);
+  // res.render('error');
 });
 
 module.exports = app;
