@@ -1,21 +1,9 @@
 var express = require('express');
 var router = express.Router();
 const gitaShloks = require("./../public/shlokas/gitashloks.json")
-const Redis = require('ioredis');
-const async = require('hbs/lib/async');
+const { getDataFromCache, setDataInCache } = require('./../cache/redisCache')
 
-const redis = new Redis("redis://red-cietk8p5rnujc4p79leg:6379");
 
-// Helper function to get data from cache
-const getDataFromCache = async (key) => {
-  const cachedData = await redis.get(key);
-  return JSON.parse(cachedData);
-}
-
-// Helper function to set data in cache with an expiration time
-const setDataInCache = async (key, data, expirationTime) => {
-  await redis.set(key, JSON.parse(data), 'EX', expirationTime);
-}
 
 /* GET Bhagavad_gita shoka by chapter no and verse  */
 router.get('/shloka', async (req, res) => {
