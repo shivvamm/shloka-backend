@@ -1,9 +1,24 @@
 var express = require('express');
 var router = express.Router();
 const gitaShloks = require("./../public/shlokas/gitashloks.json")
+const Redis = require('ioredis');
+const async = require('hbs/lib/async');
+
+const redis = new Redis("redis://red-cietk8p5rnujc4p79leg:6379");
+
+// Helper function to get data from cache
+const getDataFromCache = async (key) => {
+  const cachedData = await redis.get(key);
+  return JSON.parse(cachedData);
+}
+
+// Helper function to set data in cache with an expiration time
+const setDataInCache = async (key, data, expirationTime) => {
+  await redis.set(key, JSON.parse(data), 'EX', expirationTime);
+}
 
 /* GET Bhagavad_gita shoka by chapter no and verse  */
-router.get('/shloka', (req, res) => {
+router.get('/shloka', async (req, res) => {
   const { chapter, verse } = req.query;
   if (!chapter || !verse) {
     return res.status(400).send({
@@ -25,8 +40,21 @@ router.get('/shloka', (req, res) => {
       });
     }
     else {
+      // Check if the data is already cached in Redis
+      const cacheKey = `shloka:${chapter}:${verse}`;
+      const cachedData = await getDataFromCache(cacheKey);
+
+      if (cachedData) {
+        return res.status(200).send(cachedData);
+      }
+
+      // If not cached, fetch the data and store it in Redis cache
       const data = gitaShloks[chapter][verse];
-      data["Chapter"] = chapter;
+      data['Chapter'] = chapter;
+
+      // Store the fetched data in Redis cache
+      await setDataInCache(cacheKey, data, 3600);
+
       return res.status(200).send(data);
     }
   }
@@ -39,7 +67,7 @@ router.get('/shloka', (req, res) => {
   }
 });
 
-router.get('/all', (req, res) => {
+router.get('/all', async (req, res) => {
   let { chapter, page, limit } = req.query;
   if (!chapter || chapter < 1 || chapter > 18) {
     return res.status(400).send({
@@ -50,6 +78,14 @@ router.get('/all', (req, res) => {
   try {
     if (!page) page = 1;
     if (!limit) limit = 10;
+    // Check if the data is already cached in Redis
+    const cacheKey = `all:${chapter}:${page}:${limit}`
+    const cachedData = await getDataFromCache(cacheKey);
+
+    if (cachedData) {
+      return res.status(200).send(cachedData)
+    }
+
     const temp = gitaShloks[chapter];
     const chapterNo = {
       "chapter": chapter
@@ -66,6 +102,10 @@ router.get('/all', (req, res) => {
       })
     }
     data.unshift(chapterNo)
+
+    // Store the fetched data in Redis cache
+    await setDataInCache(cacheKey, data, 3600)
+
     return res.status(200).send(data)
   } catch (e) {
     console.log(e)
@@ -76,12 +116,25 @@ router.get('/all', (req, res) => {
   }
 })
 
-router.get('/random', (req, res) => {
+router.get('/random', async (req, res) => {
   try {
     let chapter = Math.floor(Math.random() * (18 - 1) + 1);
     let verse = Math.floor(Math.random() * (gitaShloks[chapter].length - 1) + 1);
+
+    // Check if the data is already cached in Redis
+    const cacheKey = `random:${chapter}:${verse}`
+    const cachedData = await getDataFromCache(cacheKey);
+
+    if (cachedData) {
+      return res.status(200).send(cachedData)
+    }
+
     const data = gitaShloks[chapter][verse];
     data["Chapter"] = chapter;
+
+    // Store the fetched data in Redis cache
+    await setDataInCache(cacheKey, data, 3600)
+
     return res.status(200).send(data);
   } catch (e) {
     console.log(e)
@@ -92,7 +145,7 @@ router.get('/random', (req, res) => {
   }
 })
 
-router.get('/random/by', (req, res) => {
+router.get('/random/by', async (req, res) => {
   const { chapter } = req.query;
   if (!chapter) {
     return res.status(400).send({
@@ -109,8 +162,19 @@ router.get('/random/by', (req, res) => {
     }
     else {
       const verse = Math.floor(Math.random() * (gitaShloks[chapter].length - 1) + 1);
+      // Check if the data is already cached in Redis
+      const cacheKey = `randomBy:${chapter}:${verse}`
+      const cachedData = await getDataFromCache(cacheKey);
+      if (cachedData) {
+        return res.status(200).send(cachedData)
+      }
+
       const data = gitaShloks[chapter][verse];
       data["Chapter"] = chapter;
+
+      // Store the fetched data in Redis cache
+      await setDataInCache(cacheKey, data, 3600)
+
       return res.status(200).send(data);
     }
   } catch (e) {
