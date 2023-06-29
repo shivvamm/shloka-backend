@@ -21,10 +21,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api/bahgavad_gita', gitaRouter);
-app.use('/api/chanakya', chanakyaRouter);
-app.use('/api/sanskrit', sloganRouter);
-app.use('/api/vidur_niti', vidurRouter);
+app.use('/api/v1/bahgavad_gita', gitaRouter);
+app.use('/api/v1/chanakya', chanakyaRouter);
+app.use('/api/v1/sanskrit', sloganRouter);
+app.use('/api/v1/vidur_niti', vidurRouter);
 
 
 // catch 404 and forward to error handler
