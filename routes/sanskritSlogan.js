@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const sanskritSlogan = require('./../public/shlokas/shloksvalid')
 
-/* GET Single  Random Chanakya Slokas  */
+/* GET Single  Random Sanskrit Slogan  */
 router.get('/slogan/random', (req, res,) => {
   try {
     const indexNo = Math.floor(Math.random() * (sanskritSlogan["sanskrit-slogan"].length - 1) + 1);
@@ -17,7 +17,7 @@ router.get('/slogan/random', (req, res,) => {
   }
 });
 
-/* GET All  Chanakya Slokas with pagination  */
+/* GET All  Sanskrit Slogan with pagination  */
 router.get('/slogan', (req, res) => {
   let { page, limit } = req.query;
   try {
@@ -45,7 +45,7 @@ router.get('/slogan', (req, res) => {
 });
 
 
-/* GET All Chanakya Slokas  */
+/* GET All Sanskrit Slogan  */
 router.get('/all', (req, res) => {
   try {
     const data = sanskritSlogan["sanskrit-slogan"];
