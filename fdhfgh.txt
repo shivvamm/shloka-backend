@@ -1,0 +1,7 @@
+shloka?chapter=13&verse=6
+
+all?chapter=5
+
+random
+
+random/by?chapter
