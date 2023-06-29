@@ -2,7 +2,14 @@
   "name": "shloka",
   "version": "0.0.0",
   "private": true,
+   "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/"
+    ]
+  },
   "scripts": {
+    "test":"jest",
     "start": "node ./bin/www"
   },
   "dependencies": {
@@ -14,6 +21,8 @@
     "morgan": "~1.9.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
   }
 }
