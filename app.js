@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 require('dotenv').config()
-
+const rateLimitMiddleware = require('./utils/redisRateLimit')
 var gitaRouter = require('./routes/bhagavadGita');
 var chanakyaRouter = require('./routes/chanakya');
 var sloganRouter = require('./routes/sanskritSlogan');
@@ -21,6 +21,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+app.use(rateLimitMiddleware);
 
 app.use('/api/v1/bahgavad_gita', gitaRouter);
 app.use('/api/v1/chanakya', chanakyaRouter);
