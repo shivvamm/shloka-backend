@@ -13,15 +13,15 @@ router.get('/slogan/random', async (req, res,) => {
     const cachedData = await getDataFromCache(cacheKey);
 
     if (cachedData) {
-      return res.status(200).send(cachedData);
+      return res.status(200).json(cachedData);
     }
     const data = sanskritSlogan["sanskrit-slogan"][indexNo];
     // Store the fetched data in Redis cache
     await setDataInCache(cacheKey, data, 3600)
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   } catch (e) {
     console.log(e);
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: "Internal Server Error"
     })
