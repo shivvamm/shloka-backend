@@ -22,11 +22,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/healtz',(req, res)=>{
+app.use('/healtz', (req, res) => {
   return res.status(200);
-  })
+})
 
-  app.use(rateLimitMiddleware);
+app.use(rateLimitMiddleware);
 app.use('/api/v1/bahgavad_gita', gitaRouter);
 app.use('/api/v1/chanakya', chanakyaRouter);
 app.use('/api/v1/sanskrit', sloganRouter);
