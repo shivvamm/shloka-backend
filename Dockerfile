@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the Express.js application
-CMD ["node", "app.js"]
+CMD ["node", "./bin/www"]
