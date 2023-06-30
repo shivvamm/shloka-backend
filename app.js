@@ -5,12 +5,20 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 require('dotenv').config()
 const rateLimitMiddleware = require('./utils/redisRateLimit')
+const cors = require('cors');
+
+
+
+
+
 var gitaRouter = require('./routes/bhagavadGita');
 var chanakyaRouter = require('./routes/chanakya');
 var sloganRouter = require('./routes/sanskritSlogan');
 var vidurRouter = require('./routes/vidurNiti');
 
 var app = express();
+
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
