@@ -1,8 +1,8 @@
 # Specify the base image and version
-FROM node:14
+FROM node:18
 
 # Set the working directory inside the Docker image
-WORKDIR /app
+WORKDIR /bin/www
 
 # Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
