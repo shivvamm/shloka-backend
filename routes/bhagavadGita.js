@@ -9,20 +9,20 @@ const { getDataFromCache, setDataInCache } = require('../utils/redisCache')
 router.get('/shloka', async (req, res) => {
   const { chapter, verse } = req.query;
   if (!chapter || !verse) {
-    return res.status(400).send({
+    return res.status(400).json({
       success: false,
       message: "Please provide Chapter and Verse"
     });
   }
   try {
     if (chapter > 18 || chapter < 1) {
-      return res.status(400).send({
+      return res.status(400).json({
         success: false,
         message: "Please provide a Valid Chapter and Verse"
       });
     }
     else if (verse < 1 || verse > gitaShloks[chapter].length) {
-      return res.status(400).send({
+      return res.status(400).json({
         success: false,
         message: "Please provide a Valid  Verse"
       });
@@ -33,7 +33,7 @@ router.get('/shloka', async (req, res) => {
       const cachedData = await getDataFromCache(cacheKey);
 
       if (cachedData) {
-        return res.status(200).send(cachedData);
+        return res.status(200).json(cachedData);
       }
 
       // If not cached, fetch the data and store it in Redis cache
@@ -43,12 +43,12 @@ router.get('/shloka', async (req, res) => {
       // Store the fetched data in Redis cache
       await setDataInCache(cacheKey, data, 3600);
 
-      return res.status(200).send(data);
+      return res.status(200).json(data);
     }
   }
   catch (e) {
     console.log(e)
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: "Internal Server Error"
     });
@@ -58,7 +58,7 @@ router.get('/shloka', async (req, res) => {
 router.get('/all', async (req, res) => {
   let { chapter, page, limit } = req.query;
   if (!chapter || chapter < 1 || chapter > 18) {
-    return res.status(400).send({
+    return res.status(400).json({
       success: false,
       message: "Please provide a Valid Chapter"
     })
@@ -71,7 +71,7 @@ router.get('/all', async (req, res) => {
     const cachedData = await getDataFromCache(cacheKey);
 
     if (cachedData) {
-      return res.status(200).send(cachedData)
+      return res.status(200).json(cachedData)
     }
 
     const temp = gitaShloks[chapter];
@@ -84,7 +84,7 @@ router.get('/all', async (req, res) => {
     const logicalLimit = 10;
     const data = temp.slice(starIndex - 1, endIndex)
     if (data.length == 0) {
-      return res.status(500).send({
+      return res.status(500).json({
         success: false,
         message: `Please select the page in range of ${logicalPage} with limit of ${logicalLimit} or you can modify becaue the total verses in this chapter is ${temp.length}`
       })
@@ -94,10 +94,10 @@ router.get('/all', async (req, res) => {
     // Store the fetched data in Redis cache
     await setDataInCache(cacheKey, data, 3600)
 
-    return res.status(200).send(data)
+    return res.status(200).json(data)
   } catch (e) {
     console.log(e)
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: "Internal Server Error"
     })
@@ -114,7 +114,7 @@ router.get('/random', async (req, res) => {
     const cachedData = await getDataFromCache(cacheKey);
 
     if (cachedData) {
-      return res.status(200).send(cachedData)
+      return res.status(200).json(cachedData)
     }
 
     const data = gitaShloks[chapter][verse];
@@ -123,10 +123,10 @@ router.get('/random', async (req, res) => {
     // Store the fetched data in Redis cache
     await setDataInCache(cacheKey, data, 3600)
 
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   } catch (e) {
     console.log(e)
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: "Internal Server Error"
     })
@@ -136,14 +136,14 @@ router.get('/random', async (req, res) => {
 router.get('/random/by', async (req, res) => {
   const { chapter } = req.query;
   if (!chapter) {
-    return res.status(400).send({
+    return res.status(400).json({
       success: false,
       message: "Please provide Chapter"
     })
   }
   try {
     if (chapter < 1 || chapter > 18) {
-      return res.status(400).send({
+      return res.status(400).json({
         success: false,
         message: "Please provide a Valid Chapter"
       })
@@ -154,7 +154,7 @@ router.get('/random/by', async (req, res) => {
       const cacheKey = `Gita:randomBy:${chapter}:${verse}`
       const cachedData = await getDataFromCache(cacheKey);
       if (cachedData) {
-        return res.status(200).send(cachedData)
+        return res.status(200).json(cachedData)
       }
 
       const data = gitaShloks[chapter][verse];
@@ -163,11 +163,11 @@ router.get('/random/by', async (req, res) => {
       // Store the fetched data in Redis cache
       await setDataInCache(cacheKey, data, 3600)
 
-      return res.status(200).send(data);
+      return res.status(200).json(data);
     }
   } catch (e) {
     console.log(e)
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: "Internal Server Error"
     })

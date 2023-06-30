@@ -12,16 +12,16 @@ router.get('/shloka/random', async (req, res,) => {
     const cachedData = await getDataFromCache(cacheKey);
 
     if (cachedData) {
-      return res.status(200).send(cachedData);
+      return res.status(200).json(cachedData);
     }
 
     const data = chanakyaShloks["Chanakya Slokas"][indexNo];
     // Store the fetched data in Redis cache
     await setDataInCache(cacheKey, data, 3600)
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   } catch (e) {
     console.log(e);
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: "Internal Server Error"
     })
@@ -39,7 +39,7 @@ router.get('/shloka', async (req, res) => {
     const cachedData = await getDataFromCache(cacheKey);
 
     if (cachedData) {
-      return res.status(200).send(cachedData);
+      return res.status(200).json(cachedData);
     }
     const startIndex = parseInt((page - 1) * limit + 1);
     const endIndex = parseInt(page * limit);
@@ -47,7 +47,7 @@ router.get('/shloka', async (req, res) => {
     const logicalLimit = 10;
     const data = chanakyaShloks["Chanakya Slokas"].slice(startIndex, endIndex);
     if (data.length === 0) {
-      return res.status(500).send({
+      return res.status(500).json({
         success: false,
         message: `Please select the page in range of ${logicalPage} with limit of ${logicalLimit} or you can modify becaue the total shloks is  is ${chanakyaShloks["Chanakya Slokas"].length}`
       })
@@ -55,10 +55,10 @@ router.get('/shloka', async (req, res) => {
 
     // Store the fetched data in Redis cache
     await setDataInCache(cacheKey, data, 3600)
-    return res.status(200).send(data);
+    return res.status(200).json(data);
   } catch (e) {
     console.log(e);
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: "Internal Server Error"
     })
@@ -74,15 +74,15 @@ router.get('/all', async (req, res) => {
     const cachedData = await getDataFromCache(cacheKey);
 
     if (cachedData) {
-      return res.status(200).send(cachedData);
+      return res.status(200).json(cachedData);
     }
     const data = chanakyaShloks["Chanakya Slokas"];
     // Store the fetched data in Redis cache
     await setDataInCache(cacheKey, data, 3600)
-    res.status(200).send(data);
+    res.status(200).json(data);
   } catch (e) {
     console.log(e);
-    return res.status(500).send({
+    return res.status(500).json({
       success: false,
       message: "Internal Server Error"
     })
