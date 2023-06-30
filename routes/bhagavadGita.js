@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const gitaShloks = require("./../public/shlokas/gitashloks.json")
-const { getDataFromCache, setDataInCache } = require('./../cache/redisCache')
+const { getDataFromCache, setDataInCache } = require('../utils/redisCache')
 
 
 
@@ -29,7 +29,7 @@ router.get('/shloka', async (req, res) => {
     }
     else {
       // Check if the data is already cached in Redis
-      const cacheKey = `shloka:${chapter}:${verse}`;
+      const cacheKey = `Gita:${chapter}:${verse}`;
       const cachedData = await getDataFromCache(cacheKey);
 
       if (cachedData) {
@@ -67,7 +67,7 @@ router.get('/all', async (req, res) => {
     if (!page) page = 1;
     if (!limit) limit = 10;
     // Check if the data is already cached in Redis
-    const cacheKey = `all:${chapter}:${page}:${limit}`
+    const cacheKey = `Gita:all:${chapter}:${page}:${limit}`
     const cachedData = await getDataFromCache(cacheKey);
 
     if (cachedData) {
@@ -110,7 +110,7 @@ router.get('/random', async (req, res) => {
     let verse = Math.floor(Math.random() * (gitaShloks[chapter].length - 1) + 1);
 
     // Check if the data is already cached in Redis
-    const cacheKey = `random:${chapter}:${verse}`
+    const cacheKey = `Gita:random:${chapter}:${verse}`
     const cachedData = await getDataFromCache(cacheKey);
 
     if (cachedData) {
@@ -151,7 +151,7 @@ router.get('/random/by', async (req, res) => {
     else {
       const verse = Math.floor(Math.random() * (gitaShloks[chapter].length - 1) + 1);
       // Check if the data is already cached in Redis
-      const cacheKey = `randomBy:${chapter}:${verse}`
+      const cacheKey = `Gita:randomBy:${chapter}:${verse}`
       const cachedData = await getDataFromCache(cacheKey);
       if (cachedData) {
         return res.status(200).send(cachedData)
