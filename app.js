@@ -40,7 +40,6 @@ app.use('/api/v1/chanakya', chanakyaRouter);
 app.use('/api/v1/sanskrit', sloganRouter);
 app.use('/api/v1/vidur_niti', vidurRouter);
 
-
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

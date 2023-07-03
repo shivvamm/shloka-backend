@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const sanskritSlogan = require('./../public/shlokas/shloksvalid')
 const { getDataFromCache, setDataInCache } = require('../utils/redisCache')
-
+const { createCanvas, loadImage, registerFont } = require('canvas');
 
 /* GET Single  Random Sanskrit Slogan  */
 router.get('/slogan/random', async (req, res,) => {
@@ -79,6 +79,57 @@ router.get('/all', async (req, res) => {
     // Store the fetched data in Redis cache
     await setDataInCache(cacheKey, data, 3600);
     res.status(200).json(data);
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    })
+  }
+});
+
+/* GET All Sanskrit Slogan  */
+router.get('/slogan/image', async (req, res) => {
+  try {
+
+    const indexNo = Math.floor(Math.random() * (sanskritSlogan["sanskrit-slogan"].length - 1) + 1);
+    const slogan = sanskritSlogan["sanskrit-slogan"][indexNo];
+
+    const width = 600;
+    const height = 100;
+
+    // Create a canvas instance
+    const canvas = createCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+
+    // Load background image
+    const background = await loadImage('../image/bg1.jpg'); // Replace with the actual path to your background image file
+    ctx.drawImage(background, 0, 0, width, height);
+
+    // Set font properties
+    const fontPath = '../public/fonts/TiroDevanagariSanskrit-Italic.ttf'; // Replace with the actual path to your font file
+    registerFont(fontPath, { family: 'Your Font Family' });
+    ctx.font = '24px "Your Font Family"';
+    ctx.fillStyle = '#FFFFFF'; // Color for the Sanskrit slogan
+
+    // Calculate the position to center the slogan
+    const textWidth = ctx.measureText(slogan).width;
+    const x = (width - textWidth) / 2;
+    const y = height / 2;
+
+    // Draw the slogan
+    ctx.fillText(slogan, x, y);
+
+    // Convert the canvas to a data URL
+    const imageDataUrl = canvas.toDataURL();
+
+    // Set the response headers
+    res.set('Content-Type', 'image/png');
+    res.set('Content-Disposition', 'inline');
+
+    // Send the image as a response
+    res.send(Buffer.from(imageDataUrl.replace('data:image/png;base64,', ''), 'base64'));
+
   } catch (e) {
     console.log(e);
     return res.status(500).json({
