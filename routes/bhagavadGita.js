@@ -30,18 +30,19 @@ router.get('/shloka', async (req, res) => {
     else {
       // Check if the data is already cached in Redis
       const cacheKey = `Gita:${chapter}:${verse}`;
-      const cachedData = await getDataFromCache(cacheKey);
+      let data = await getDataFromCache(cacheKey);
 
-      if (cachedData) {
-        return res.status(200).json(cachedData);
+      if (!data) {
+        data = gitaShloks[chapter][verse];
+        data['Chapter'] = chapter;
+              // Store the fetched data in Redis cache
+      await setDataInCache(cacheKey, data, 3600);
       }
 
       // If not cached, fetch the data and store it in Redis cache
-      const data = gitaShloks[chapter][verse];
-      data['Chapter'] = chapter;
+      
 
-      // Store the fetched data in Redis cache
-      await setDataInCache(cacheKey, data, 3600);
+
 
       return res.status(200).json(data);
     }
@@ -68,31 +69,29 @@ router.get('/all', async (req, res) => {
     if (!limit) limit = 10;
     // Check if the data is already cached in Redis
     const cacheKey = `Gita:all:${chapter}:${page}:${limit}`
-    const cachedData = await getDataFromCache(cacheKey);
+    let data = await getDataFromCache(cacheKey);
 
-    if (cachedData) {
-      return res.status(200).json(cachedData)
-    }
-
-    const temp = gitaShloks[chapter];
-    const chapterNo = {
-      "chapter": chapter
-    }
-    const starIndex = parseInt((page - 1) * limit + 1);
-    const endIndex = parseInt(page * limit);
-    const logicalPage = parseInt(temp.length / 10);
-    const logicalLimit = 10;
-    const data = temp.slice(starIndex - 1, endIndex)
-    if (data.length == 0) {
-      return res.status(500).json({
-        success: false,
-        message: `Please select the page in range of ${logicalPage} with limit of ${logicalLimit} or you can modify becaue the total verses in this chapter is ${temp.length}`
-      })
-    }
-    data.unshift(chapterNo)
-
-    // Store the fetched data in Redis cache
+    if (!data) {
+      const temp = gitaShloks[chapter];
+      const chapterNo = {
+        "chapter": chapter
+      }
+      const starIndex = parseInt((page - 1) * limit + 1);
+      const endIndex = parseInt(page * limit);
+      const logicalPage = parseInt(temp.length / 10);
+      const logicalLimit = 10;
+       data = temp.slice(starIndex - 1, endIndex)
+      if (data.length == 0) {
+        return res.status(500).json({
+          success: false,
+          message: `Please select the page in range of ${logicalPage} with limit of ${logicalLimit} or you can modify becaue the total verses in this chapter is ${temp.length}`
+        })
+      }
+      data.unshift(chapterNo)
+          // Store the fetched data in Redis cache
     await setDataInCache(cacheKey, data, 3600)
+    }
+
 
     return res.status(200).json(data)
   } catch (e) {
@@ -111,17 +110,14 @@ router.get('/random', async (req, res) => {
 
     // Check if the data is already cached in Redis
     const cacheKey = `Gita:random:${chapter}:${verse}`
-    const cachedData = await getDataFromCache(cacheKey);
+    let data = await getDataFromCache(cacheKey);
 
-    if (cachedData) {
-      return res.status(200).json(cachedData)
-    }
-
-    const data = gitaShloks[chapter][verse];
+    if (!data) {
+      data = gitaShloks[chapter][verse];
     data["Chapter"] = chapter;
-
-    // Store the fetched data in Redis cache
+     // Store the fetched data in Redis cache
     await setDataInCache(cacheKey, data, 3600)
+    }
 
     return res.status(200).json(data);
   } catch (e) {
@@ -152,17 +148,15 @@ router.get('/random/by', async (req, res) => {
       const verse = Math.floor(Math.random() * (gitaShloks[chapter].length - 1) + 1);
       // Check if the data is already cached in Redis
       const cacheKey = `Gita:randomBy:${chapter}:${verse}`
-      const cachedData = await getDataFromCache(cacheKey);
-      if (cachedData) {
-        return res.status(200).json(cachedData)
+      let data = await getDataFromCache(cacheKey);
+      if (!data) {
+        data = gitaShloks[chapter][verse];
+        data["Chapter"] = chapter;
+  
+        // Store the fetched data in Redis cache
+        await setDataInCache(cacheKey, data, 3600)
       }
-
-      const data = gitaShloks[chapter][verse];
-      data["Chapter"] = chapter;
-
-      // Store the fetched data in Redis cache
-      await setDataInCache(cacheKey, data, 3600)
-
+      
       return res.status(200).json(data);
     }
   } catch (e) {
