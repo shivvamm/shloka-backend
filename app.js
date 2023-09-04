@@ -51,7 +51,7 @@ app.use(function (err, req, res, next) {
     error: {
       code: 'NOT_FOUND',
       message: 'The requested resource could not be found',
-      documentationUrl: 'https://yourapi.com/docs', // Link to API documentation
+      documentationUrl: 'https://shloka.vercel.app/docs', // Link to API documentation
     },
   });
   // // set locals, only providing error in development
