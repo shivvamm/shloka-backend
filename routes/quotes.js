@@ -11,9 +11,7 @@ const TextToSVG = require('text-to-svg');
 const textToSVG = TextToSVG.loadSync();
 
 const indexNo = Math.floor(Math.random() * (chanakyaShloks["Chanakya Slokas"].length - 1) + 1);
-// Check if the data is already cached in Redis
-    data = chanakyaShloks["Chanakya Slokas"][indexNo];
-    // Store the fetched data in Redis cache
+const data = chanakyaShloks["Chanakya Slokas"][indexNo];
 const respo = data.sloka;
 
 const attributes = { fill: 'red', stroke: 'black' };
