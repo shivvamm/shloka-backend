@@ -21,7 +21,8 @@ const chanakya = async () => {
         // Store the fetched data in Redis cache
         await setDataInCache(cacheKey, data, 3600)
     }
-    return data.shloka
+    const respo = `${data.shloka}`;
+    return respo;
 }
 
 
