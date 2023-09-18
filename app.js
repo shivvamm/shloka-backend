@@ -1,8 +1,8 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 require('dotenv').config()
 const rateLimitMiddleware = require('./utils/redisRateLimit')
 const cors = require('cors');
@@ -54,13 +54,6 @@ app.use(function (err, req, res, next) {
       documentationUrl: 'https://shloka.vercel.app/docs', // Link to API documentation
     },
   });
-  // // set locals, only providing error in development
-  // res.locals.message = err.message;
-  // res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // // render the error page
-  // res.status(err.status || 500);
-  // res.render('error');
 });
 
 module.exports = app;
