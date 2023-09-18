@@ -10,7 +10,6 @@ const { getDataFromCache, setDataInCache } = require('../utils/redisCache')
 const TextToSVG = require('text-to-svg');
 const textToSVG = TextToSVG.loadSync();
 
-const chanakya = async () => {
     const indexNo = Math.floor(Math.random() * (chanakyaShloks["Chanakya Slokas"].length - 1) + 1);
     // Check if the data is already cached in Redis
     const cacheKey = `Chanakya:random:${indexNo}`;
@@ -22,8 +21,7 @@ const chanakya = async () => {
         await setDataInCache(cacheKey, data, 3600)
     }
     const respo = `${data.shloka}`;
-    return respo;
-}
+
 
 
 router.get("/svg", (req, res) => {
@@ -31,9 +29,10 @@ router.get("/svg", (req, res) => {
         const attributes = { fill: 'red', stroke: 'black' };
         const options = { x: 0, y: 0, fontSize: 72, anchor: 'top', attributes: attributes };
 
-        const svg = textToSVG.getSVG(chanakya, options);
+        const svg = textToSVG.getSVG(respo, options);
 
         console.log(svg);
+        return res.status(200).send(svg);
     } catch (e) {
         console.log(e);
         return res.status(500).json({
