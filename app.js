@@ -15,7 +15,6 @@ var gitaRouter = require('./routes/bhagavadGita');
 var chanakyaRouter = require('./routes/chanakya');
 var sloganRouter = require('./routes/sanskritSlogan');
 var vidurRouter = require('./routes/vidurNiti');
-var quotesRouter = require('./routes/quotes');
 
 var app = express();
 
@@ -40,7 +39,6 @@ app.use('/api/v1/bahgavad_gita', gitaRouter);
 app.use('/api/v1/chanakya', chanakyaRouter);
 app.use('/api/v1/sanskrit', sloganRouter);
 app.use('/api/v1/vidur_niti', vidurRouter);
-app.use('/api/v1/shlok', quotesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -3,6 +3,9 @@ var router = express.Router();
 const gitaShloks = require("./../public/shlokas/gitashloks.json")
 const { getDataFromCache, setDataInCache } = require('../utils/redisCache')
 
+const svg = "../index.svg";
+const generateSvg  = require("../utils/shlokToSvg");
+
 
 
 /* GET Bhagavad_gita shoka by chapter no and verse  */
@@ -56,6 +59,7 @@ router.get('/shloka', async (req, res) => {
   }
 });
 
+
 router.get('/all', async (req, res) => {
   let { chapter, page, limit } = req.query;
   if (!chapter || chapter < 1 || chapter > 18) {
@@ -102,6 +106,7 @@ router.get('/all', async (req, res) => {
     })
   }
 })
+
 
 router.get('/random', async (req, res) => {
   try {
@@ -166,6 +171,23 @@ router.get('/random/by', async (req, res) => {
       message: "Internal Server Error"
     })
   }
+})
+
+/* GET Bhagavad_gita random shoka svg  */
+router.get("/quote",async(req,res)=>{
+   try {
+   let chapter = Math.floor(Math.random() * (18 - 1) + 1);
+    let verse = Math.floor(Math.random() * (gitaShloks[chapter].length - 1) + 1);
+    data = gitaShloks[chapter][verse];
+    const page = generateSvg(data["Shloka"]).toString();
+  return res.status(200).send(page);
+}catch(e){
+  console.log(e)
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error"
+    })
+}
 })
 
 module.exports = router;
